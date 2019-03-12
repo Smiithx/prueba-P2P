@@ -35,4 +35,11 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    "p2p" => [
+        "auth" => [
+            "identifier" => env("P2P_IDENTIFIER","6dd490faf9cb87a9862245da41170ff2"),
+            "secretKey" => env("P2P_SECRET_KEY","024h1IlD"),
+        ]
+    ]
+
 ];
