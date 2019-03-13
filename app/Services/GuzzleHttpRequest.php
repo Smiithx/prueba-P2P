@@ -24,17 +24,32 @@ class GuzzleHttpRequest
     {
         try {
             $response = $this->client->request('GET', $url,$data);
-            $this->response = $response;
-            return json_decode($response->getBody()->getContents());
+
+            $result = new \stdClass();
+            $result->success = true;
+            $result->response = json_decode($response->getBody()->getContents());
+
+            $this->response = $result;
+
+            return $result;
         } catch (ClientException $err) {
-            $response = new \stdClass();
-            $response->code = $err->getCode();
-            $response->error = true;
-            $response->mensaje = "";
-            if($response->code === 404){
-                $response->mensaje = "Recurso no encontrado.";
-            }
-            return $response;
+            preg_match("/\{(.*)\}/",$err->getMessage(),$message);
+            $error = [
+                "code" => $err->getCode(),
+                "message" => $err->getMessage(),
+                "request" => $err->getRequest(),
+                "response" => $err->getResponse(),
+                "trace" => $err->getTraceAsString(),
+            ];
+            Log::error(json_encode($error));
+
+            $result = new \stdClass();
+            $result->success = false;
+            $result->response = $err;
+
+            $this->response = $result;
+
+            return $result;
         }
     }
 

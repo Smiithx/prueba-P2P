@@ -7,8 +7,6 @@ use App\Models\Transaction;
 use App\Services\GuzzleHttpRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class PaymentsController extends Controller
 {
@@ -20,9 +18,8 @@ class PaymentsController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $payments = Payment::with("transactions")->orderBy("created_at","desc")->get();
+            $payments = Payment::with("transactions")->orderBy("created_at", "desc")->get();
             return response()->json($payments);
-            //return response()->json([]);
         } else {
             return view("payments.index");
         }
@@ -90,7 +87,7 @@ class PaymentsController extends Controller
 
             $response = $result->response;
 
-            if($response->status->status === "OK"){
+            if ($response->status->status === "OK") {
                 $payment->process_url = $response->processUrl;
                 $payment->request_id = $response->requestId;
                 $payment->save();
@@ -100,16 +97,11 @@ class PaymentsController extends Controller
                     "message" => "El pago ha sido creado con éxito!",
                     "process_url" => $payment->process_url
                 ]);
-                //flash("El pago ha sido creado con éxito!")->success();
-                //return redirect($response->processUrl);
-            }else{
+            } else {
                 return response()->json([
                     "success" => false,
                     "message" => $response->status->message,
-                    "response" => $response
                 ]);
-                //flash($response->message)->error();
-                //return redirect("/payments/create")->withInput();
             }
 
         } else {
@@ -118,61 +110,15 @@ class PaymentsController extends Controller
                 "success" => false,
                 "message" => $result->response
             ]);
-            //flash($result->response->getMessage())->error();
-            //return redirect("/payments/create")->withInput();
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function response($reference)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function response(Request $request,$reference){
 
         $auth = $this->getAuth();
 
-        $payment = Payment::with("transactions")->where("reference",$reference)->firstOrFail();
+        $payment = Payment::with("transactions")->where("reference", $reference)->firstOrFail();
 
         // send data
         $client = new GuzzleHttpRequest();
@@ -187,8 +133,6 @@ class PaymentsController extends Controller
             $response = $result->response;
             $transactions_db = $payment->transactions->keyBy("receipt");
 
-            //dd($response);
-
             // update payment
             $solved_in = Carbon::parse($response->status->date);
             $payment->status = $response->status->status;
@@ -198,9 +142,9 @@ class PaymentsController extends Controller
             // store transactions
             $transactions = $response->payment;
 
-            if($transactions){
-                foreach($transactions as $transaction){
-                    if(!$transactions_db->has($transaction->receipt)){
+            if ($transactions) {
+                foreach ($transactions as $transaction) {
+                    if (!$transactions_db->has($transaction->receipt)) {
                         $solved_in = Carbon::parse($transaction->status->date);
                         $transaction_db = new Transaction();
                         $transaction_db->receipt = $transaction->receipt;
@@ -216,15 +160,15 @@ class PaymentsController extends Controller
                 }
             }
 
-            switch ($response->status->status){
+            switch ($response->status->status) {
                 case "APPROVED":
-                    flash($response->status->message ." <b>$reference</b>")->success();
+                    flash($response->status->message . " <b>$reference</b>")->success();
                     break;
                 case "REJECTED":
-                    flash($response->status->message." <b>$reference</b>")->error();
+                    flash($response->status->message . " <b>$reference</b>")->error();
                     break;
                 case "PENDING":
-                    flash($response->status->message." <b>$reference</b>")->warning();
+                    flash($response->status->message . " <b>$reference</b>")->warning();
                     break;
                 default:
                     return response()->json([
