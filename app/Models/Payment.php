@@ -11,7 +11,7 @@ class Payment extends Model
 
     public function getAmountFormatAttribute()
     {
-        return number_format($this->amount,2);
+        return "$this->currency $ ".number_format($this->amount,2);
     }
 
     public function transactions(){

@@ -13,12 +13,12 @@ class Transaction extends Model
 
     public function getAmountFormatAttribute()
     {
-        return number_format($this->amount,2);
+        return "$this->currency $ ". number_format($this->amount,2);
     }
 
     public function getDiscountFormatAttribute()
     {
-        return number_format($this->discount,2);
+        return "$this->currency $ ".number_format($this->discount,2);
     }
 
     public function payment(){

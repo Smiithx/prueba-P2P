@@ -73,7 +73,7 @@ class PaymentsController extends Controller
         $data = new \stdClass();
         $data->auth = $auth;
         $data->payment = $payment_request;
-        $data->expiration = date('c', strtotime('+2 days'));
+        $data->expiration = $now->format("c");
         $data->ipAddress = $payment->ip;
         $data->userAgent = $payment->user_agent;
         $data->returnUrl = url("/payments/response/$payment->reference");
@@ -138,6 +138,7 @@ class PaymentsController extends Controller
             $payment->status = $response->status->status;
             $payment->solved_in = $solved_in;
             $payment->save();
+            //dd($response);
 
             // store transactions
             $transactions = $response->payment;
@@ -151,10 +152,15 @@ class PaymentsController extends Controller
                         $transaction_db->status = $transaction->status->status;
                         $transaction_db->amount = $transaction->amount->from->total;
                         $transaction_db->currency = $transaction->amount->from->currency;
-                        $transaction_db->discount = $transaction->discount->amount;
+                        if(property_exists($transaction,"discount")){
+                            $transaction_db->discount = $transaction->discount->amount;
+                        }else{
+                            $transaction_db->discount = 0;
+                        }
                         $transaction_db->bank = $transaction->issuerName;
                         $transaction_db->solved_in = $solved_in;
                         $transaction_db->payment_id = $payment->id;
+                        $transaction_db->authorization = $transaction->authorization;
                         $transaction_db->save();
                     }
                 }

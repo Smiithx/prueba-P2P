@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="form-group text-right">
-                <a href="{{url("payments")}}" class="btn btn-primary">Transacciones registradas</a>
+                <a href="{{url("payments")}}" class="btn btn-primary">Pagos</a>
             </div>
         </div>
     </div>
@@ -21,7 +21,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="currency">Moneda</label>
-                        <input type="text" name="currency" id="currency" class="form-control">
+                        <select class="form-control" name="currency" id="currency">
+                            <option value="COP">Pesos colombianos</option>
+                            <option value="USD">Dolares estadounidense</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">

@@ -56,12 +56,10 @@
                             var status = row.status;
 
                             var button = "";
-                            if (status) {
-                                if (status !== "APPROVED") {
-                                    button = "<a href='" + row.process_url + "' class='btn btn-primary' data-toggle='tooltip' title='Pagar'><i class='glyphicon glyphicon-shopping-cart'></i></a>";
-                                }
-                            } else {
-                                button = "<a href='{{url("/payments/response/")}}/" + row.reference + "' class='btn btn-primary' data-toggle='tooltip' title='Consultar'><i class='glyphicon glyphicon-info-sign'></i></a> ";
+
+                            if (status !== "APPROVED") {
+                                button = "<a href='" + row.process_url + "' class='btn btn-primary' data-toggle='tooltip' title='Pagar'><i class='glyphicon glyphicon-shopping-cart'></i></a>";
+                                button += "<a href='{{url("/payments/response/")}}/" + row.reference + "' class='btn btn-success' data-toggle='tooltip' title='Consultar'><i class='glyphicon glyphicon-info-sign'></i></a> ";
                             }
 
                             var transactions = "<button class='btn btn-info details-control' data-toggle='tooltip' title='Transacciones'><i class='glyphicon glyphicon-th-list'></i></button>";
@@ -104,12 +102,13 @@
                 var trs = "";
                 $.each(transactions,function(i,transaction){
                     trs += '<tr>\n' +
-                            '<td>'+transaction.receipt+'</td>\n' +
                             '<td class="text-center">'+transaction.solved_in+'</td>\n' +
-                            '<td class="text-right">'+transaction.discount_format+'</td>\n' +
-                            '<td class="text-right">'+transaction.amount_format+'</td>\n' +
-                            '<td>'+transaction.bank+'</td>\n' +
+                            '<td>'+transaction.receipt+'</td>\n' +
+                            '<td>'+transaction.authorization+'</td>\n' +
                             '<td class="text-center">'+transaction.status+'</td>\n' +
+                            '<td class="text-right">'+transaction.discount_format+'</td>\n' +
+                            '<td class="text-right">'+ transaction.amount_format+'</td>\n' +
+                            '<td>'+transaction.bank+'</td>\n' +
                         '</tr>\n';
                 });
 
@@ -118,12 +117,13 @@
                     '<table class="table table-bordered">\n' +
                     '<thead>\n' +
                     '<tr>\n' +
+                    '<th>Fecha y hora</th>\n' +
                     '<th>Recibo</th>\n' +
-                    '<th>Fecha</th>\n' +
+                    '<th>Autorizacion/CUS</th>\n' +
+                    '<th class="text-center">Estado</th>\n' +
                     '<th>Descuento</th>\n' +
                     '<th class="text-center">Monto</th>\n' +
                     '<th>Banco</th>\n' +
-                    '<th class="text-center">Estado</th>\n' +
                     '</tr>\n' +
                     '</thead>\n' +
                     '<tbody>\n' +

@@ -15,9 +15,10 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger("receipt")->index();
+            $table->unsignedInteger("receipt")->index()->unique();
             $table->string("status");
             $table->string("currency");
+            $table->string("authorization");
             $table->decimal("amount",42,2);
             $table->decimal("discount",42,2);
             $table->string("bank");
