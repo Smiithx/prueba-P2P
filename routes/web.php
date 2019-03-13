@@ -12,5 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect("/payments");
 });
+
+Route::resource('/payments',"PaymentsController");
+
+Route::get('/payments/response/{reference}', 'PaymentsController@response');
