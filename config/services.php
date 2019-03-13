@@ -36,6 +36,7 @@ return [
     ],
 
     "p2p" => [
+        "baseUrl" => env("P2P_BASE_URL","https://test.placetopay.com/redirection/"),
         "auth" => [
             "identifier" => env("P2P_IDENTIFIER","6dd490faf9cb87a9862245da41170ff2"),
             "secretKey" => env("P2P_SECRET_KEY","024h1IlD"),
