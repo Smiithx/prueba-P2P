@@ -31,12 +31,20 @@ php artisan migrate
 
 ## Uso
 
-Ejecutar la aplicación a traves del comando o alojarla en algun servidor.
+Ejecutar la aplicación a traves del comando.
 
 ```
  php artisan serve
- ```
+```
    
- Ingresar a la ruta `/payments` para ver el listado de pagos con sus transacciones
+Ingresar a la ruta `/payments` para ver el listado de pagos con sus transacciones
  
- Ingresar a la ruta `/payments/create` para registar un nuevo pago
+Ingresar a la ruta `/payments/create` para registar un nuevo pago
+
+## Test
+
+Para ejecutar las pruebas unitarias, ejecute el comando en la consola
+
+```
+./vendor/bin/phpunit
+```
