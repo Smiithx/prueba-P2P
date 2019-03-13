@@ -43,12 +43,18 @@ class PaymentsController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            "description" => "required",
+            "currency" => "required",
+            "amount" => "required|min:0",
+        ]);
+
         $auth = $this->getAuth();
         $description = $request->description;
         $currency = $request->currency;
         $amount = $request->amount;
 
-        // store payment
+        // create payment
         $payment = new Payment();
         $now = Carbon::now(config('app.timezone'));
         $date = $now->format('Ymdhis');
@@ -70,6 +76,7 @@ class PaymentsController extends Controller
         $amount_request->total = $payment->amount;
         $payment_request->amount = $amount_request;
 
+        // preparing data
         $data = new \stdClass();
         $data->auth = $auth;
         $data->payment = $payment_request;
@@ -88,6 +95,7 @@ class PaymentsController extends Controller
             $response = $result->response;
 
             if ($response->status->status === "OK") {
+                // store payment
                 $payment->process_url = $response->processUrl;
                 $payment->request_id = $response->requestId;
                 $payment->save();
